@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  nginx:
+    image: nginx:1.17.5
+    ports:
+      - 8080:80
+    volumes:
+      - ./configs/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    volumes_from:
+      - php
+
+  php:
+    build: ./docker_images/php
+    expose:
+      - 9000
+    volumes:
+      - ./src:/var/www/html
+      - ./configs/php/php.ini:/usr/local/etc/php/php.ini
+
+  mariadb:
+    image: mariadb:10.3.11
+    expose:
+      - 3306
+    ports:
+      - 3307:3306
+    volumes:
+      - ./db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
