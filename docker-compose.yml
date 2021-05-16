@@ -18,8 +18,8 @@ services:
     container_name: php
     build: ./docker_images/php
     working_dir: /var/www/html
-    # expose:
-    #   - 9000
+    expose:
+      - 9000
     volumes:
       - ./src:/var/www/html
       - ./configs/php/php.ini:/usr/local/etc/php/php.ini
