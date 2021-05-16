@@ -48,6 +48,11 @@ RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
     && pecl install libsodium-2.0.23
 
+#GIT
+RUN apt-get update \
+    && apt-get install -y git \
+    && apt-get clean all
+
 #COMPOSER
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --1\
     && apt -qy install $PHPIZE_DEPS && mkdir /${_HOME_DIRECTORY}/.composer
