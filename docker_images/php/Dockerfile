@@ -1,4 +1,4 @@
-FROM php:8.0-fpm
+FROM php:7.4-fpm
 
 #SETTING UP THE SYSTEM
 RUN apt-get update \
@@ -54,7 +54,7 @@ RUN apt-get update \
     && apt-get clean all
 
 #COMPOSER
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --1\
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --2\
     && apt -qy install $PHPIZE_DEPS && mkdir /${_HOME_DIRECTORY}/.composer
 
 #XDEBUG
