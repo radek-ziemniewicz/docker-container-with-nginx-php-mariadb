@@ -6,21 +6,37 @@ services:
     image: nginx:1.17.5
     restart: always
     ports:
-      - 80:80
+      - 81:80
     volumes:
       - ./configs/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./src:/var/www/html
-    volumes_from:
-      - php
+      - ./configs/ssl:/etc/nginx/ssl
     networks:
       - default_network
-
-  php:
-    container_name: php
+  httpd:
+    container_name: httpd
+    build: ./docker_images/httpd
+    ports:
+      - 8080:80
+    volumes:
+      - ./configs/httpd/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+      - ./src:/var/www/html
+      - ./configs/ssl:/etc/nginx/ssl
+      - ./logs/apache2:/var/log/apache2
+      - ./configs/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./configs/httpd/apache2.conf:/etc/apache2/apache2.conf
+      - ./configs/httpd/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./configs/httpd/rewrite.load:/etc/apache2/mods-enabled/rewrite.load
+      - ./configs/httpd/php.ini:/usr/local/etc/php/php.ini
+      - ./configs/httpd/group:/etc/group
+    networks:
+      - default_network
+  mag_php:
+    container_name: mag_php
     build: ./docker_images/php
     working_dir: /var/www/html
-    expose:
-      - 9000:9000
+    ports:
+        - 9001:9000
     volumes:
       - ./src:/var/www/html
       - ./configs/php/php.ini:/usr/local/etc/php/php.ini
@@ -28,12 +44,12 @@ services:
     networks:
       - default_network
 
-  db:
-    container_name: db
+  mag_db:
+    container_name: mag_db
     image: mariadb:10.3.11
     restart: always
     ports:
-      - 3306:3306
+      - 3307:3306
     volumes:
       - db_data_volume:/var/lib/mysql
       - ./configs/mariadb:/etc/mysql/conf.d
@@ -56,7 +72,7 @@ services:
         - discovery.type=single-node
         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
-        - 9200:9200
+        - 9201:9200
     volumes:
         - es_data_volume:/usr/share/elasticsearch/data
     networks:
